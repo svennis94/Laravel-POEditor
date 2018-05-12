@@ -23,7 +23,7 @@ class LocalesTest extends TestCase
                 'code' => $language['code'],
             ];
         }
-        
+
         $this->assertJsonStringEqualsJsonFile(resource_path('lang/locales.json'), json_encode($locales));
     }
 }

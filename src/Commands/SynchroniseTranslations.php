@@ -3,6 +3,7 @@
 namespace SeBuDesign\PoEditor\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use SeBuDesign\PoEditor\PoEditor;
 
 class SynchroniseTranslations extends Command
@@ -18,8 +19,6 @@ class SynchroniseTranslations extends Command
 
         $locales = collect();
         foreach ($poeditor->languages() as $language) {
-            $languageFile = resource_path('lang/' . $language['code'] . '.json');
-
             $terms = collect($poeditor->terms($language['code']))
                 // Pluck the translation content and set the term as the key
                 ->pluck('translation.content', 'term')
@@ -30,16 +29,12 @@ class SynchroniseTranslations extends Command
                     }
 
                     return $content;
-                })
-                ->toJson();
+                });
 
-            // If an old file exists remove it
-            if (\File::exists($languageFile)) {
-                \File::delete($languageFile);
-            }
-
-            // Write the new file
-            \File::put($languageFile, $terms);
+            $this->updateFile(
+                resource_path('lang/' . $language['code'] . '.json'),
+                $terms
+            );
 
             $locales->push([
                 'name' => $language['name'],
@@ -47,11 +42,27 @@ class SynchroniseTranslations extends Command
             ]);
         }
 
-        \File::put(
+        $this->updateFile(
             resource_path('lang/locales.json'),
-            $locales->toJson()
+            $locales
         );
 
         $this->info("Translations synchronised");
+    }
+
+    protected function updateFile($file, $content)
+    {
+        // If an old file exists remove it
+        if (\File::exists($file)) {
+            \File::delete($file);
+        }
+
+        // If it is a collection create a json string of it
+        if ($content instanceof Collection) {
+            $content = $content->toJson();
+        }
+
+        // Write the new file
+        \File::put($file, $content);
     }
 }

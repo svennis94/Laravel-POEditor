@@ -16,6 +16,7 @@ class SynchroniseTranslations extends Command
     {
         $poeditor = new PoEditor($this->argument('project'));
 
+        $locales = collect();
         foreach ($poeditor->languages() as $language) {
             $languageFile = resource_path('lang/' . $language['code'] . '.json');
 
@@ -39,7 +40,17 @@ class SynchroniseTranslations extends Command
 
             // Write the new file
             \File::put($languageFile, $terms);
+
+            $locales->push([
+                'name' => $language['name'],
+                'code' => $language['code'],
+            ]);
         }
+
+        \File::put(
+            resource_path('lang/locales.json'),
+            $locales->toJson()
+        );
 
         $this->info("Translations synchronised");
     }

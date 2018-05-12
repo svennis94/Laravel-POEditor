@@ -4,6 +4,7 @@ namespace SeBuDesign\PoEditor\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
+use SeBuDesign\PoEditor\Events\TranslationsSynchronized;
 use SeBuDesign\PoEditor\PoEditor;
 
 class SynchroniseTranslations extends Command
@@ -46,6 +47,9 @@ class SynchroniseTranslations extends Command
             resource_path('lang/locales.json'),
             $locales
         );
+
+        // Create an event to clear translations cache or something else
+        event(new TranslationsSynchronized());
 
         $this->info("Translations synchronised");
     }

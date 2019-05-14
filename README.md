@@ -1,5 +1,5 @@
 # Laravel-POEditor
-A Laravel wrapper for the POEditor. In order to use this package tou need to have an account and project at [POEditor](https://poeditor.com/). You can retrieve your API token and project id's from your account page in the API Access tab.
+A Laravel wrapper for the POEditor. In order to use this package you need to have an account and project at [POEditor](https://poeditor.com/). You can retrieve your API token and project id's from your account page in the API Access tab.
 
 * [Installation](#installation)
 * [Usage](#usage)
